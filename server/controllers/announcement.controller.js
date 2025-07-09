@@ -1,13 +1,13 @@
 import Announcement from "../models/announcement.model.js";
 import mongoose from "mongoose";
 
-export const getAllAnnouncements = async (_, res) => {
+export const getAllAnnouncements = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * limit;
 
-    const announcements = await Announcement.find({}, { __v: false })
+    const announcements = await Announcement.find({})
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
@@ -25,6 +25,7 @@ export const getAllAnnouncements = async (_, res) => {
       message: "Announcements fetched successfully",
     });
   } catch (error) {
+    console.error("❌ Internal Error:", error);
     res.status(500).json({ success: false, message: "Server Error", error });
   }
 };
