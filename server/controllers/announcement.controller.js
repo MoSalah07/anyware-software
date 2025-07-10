@@ -1,5 +1,6 @@
 import Announcement from "../models/announcement.model.js";
-import mongoose from "mongoose";
+import { validateObjectId } from "../utils/isValidObjectId.js";
+import { sendSuccess, sendError } from "../utils/response.js";
 
 export const getAllAnnouncements = async (req, res) => {
   try {
@@ -7,70 +8,57 @@ export const getAllAnnouncements = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * limit;
 
-    const announcements = await Announcement.find({})
+    const announcements = await Announcement.find({}, { __v: 0 })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
       .lean();
 
-    if (!announcements || announcements.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Announcements not found" });
+    if (!announcements.length) {
+      return sendError(res, "Announcements not found", 404);
     }
 
-    res.status(201).json({
-      success: true,
-      data: { announcements },
-      message: "Announcements fetched successfully",
-    });
+    return sendSuccess(
+      res,
+      { announcements },
+      "Announcements fetched successfully",
+      200
+    );
   } catch (error) {
-    console.error("❌ Internal Error:", error);
-    res.status(500).json({ success: false, message: "Server Error", error });
+    return sendError(res, "Server Error", 500, error.message);
   }
 };
 
 export const getSingleAnnouncement = async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid announcement ID",
-      });
-    }
+    validateObjectId(req.params.id, "Announcement ID");
 
-    const announcement = await Announcement.findById(id).lean();
+    const announcement = await Announcement.findById(req.params.id).lean();
 
-    if (!announcement) {
-      return res.status(404).json({
-        success: false,
-        message: "Announcement not found",
-      });
-    }
+    if (!announcement) return sendError(res, "Announcement not found", 404);
 
-    return res.status(200).json({
-      success: true,
-      data: announcement,
-      message: "Announcement fetched successfully",
-    });
-  } catch (err) {
-    console.error("Get Single Announcement Error:", err.message);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    return sendSuccess(
+      res,
+      announcement,
+      "Announcement fetched successfully",
+      200
+    );
+  } catch (error) {
+    return sendError(
+      res,
+      error.message.includes("Invalid") ? error.message : "Server Error",
+      400,
+      error.message
+    );
   }
 };
 
 export const createAnnouncement = async (req, res) => {
   try {
-    const { title, content, postedby } = req.body || {};
+    const { title, content, postedby } = req.body;
 
     if (!title?.trim() || !content?.trim() || !postedby?.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+      return sendError(res, "All fields are required", 400);
     }
 
     const newAnnouncement = await Announcement.create({
@@ -79,93 +67,66 @@ export const createAnnouncement = async (req, res) => {
       postedby,
     });
 
-    res.status(201).json({
-      success: true,
-      data: { newAnnouncement },
-      message: "Announcement created successfully",
-    });
+    return sendSuccess(
+      res,
+      { newAnnouncement },
+      "Announcement created successfully",
+      201
+    );
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error", error });
-  }
-};
-
-export const deleteAnnouncement = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid announcement ID",
-      });
-    }
-
-    const deletedAnnouncement = await Announcement.findByIdAndDelete(id);
-
-    if (!deletedAnnouncement) {
-      return res.status(404).json({
-        success: false,
-        message: "Announcement not found",
-      });
-    }
-
-    res.status(201).json({
-      success: true,
-      data: { deletedAnnouncement },
-      message: "Announcement deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error", error });
+    return sendError(res, "Server Error", 500, error.message);
   }
 };
 
 export const updateAnnouncement = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, content, postedby } = req.body || {};
+    validateObjectId(req.params.id, "Announcement ID");
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid announcement ID",
-      });
-    }
+    const { title, content, postedby } = req.body;
 
     if (!title?.trim() || !content?.trim() || !postedby?.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
+      return sendError(res, "All fields are required", 400);
     }
 
-    const updatedAnnouncement = await Announcement.findByIdAndUpdate(
-      id,
-      {
-        title: title.trim(),
-        content: content.trim(),
-        postedby: postedby.trim(),
-      },
+    const updated = await Announcement.findByIdAndUpdate(
+      req.params.id,
+      { title, content, postedby },
       { new: true }
     );
 
-    if (!updatedAnnouncement) {
-      return res.status(404).json({
-        success: false,
-        message: "Announcement not found",
-      });
-    }
+    if (!updated) return sendError(res, "Announcement not found", 404);
 
-    return res.status(200).json({
-      success: true,
-      data: updatedAnnouncement,
-      message: "Announcement updated successfully",
-    });
+    return sendSuccess(res, updated, "Announcement updated successfully", 200);
   } catch (error) {
-    console.error("Update Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-      error: error.message,
-    });
+    return sendError(
+      res,
+      error.message.includes("Invalid") ? error.message : "Server Error",
+      400,
+      error.message
+    );
+  }
+};
+
+export const deleteAnnouncement = async (req, res) => {
+  try {
+    validateObjectId(req.params.id, "Announcement ID");
+
+    const deleted = await Announcement.findByIdAndDelete(req.params.id);
+
+    if (!deleted) return sendError(res, "Announcement not found", 404);
+
+    return sendSuccess(
+      res,
+      { deleted },
+      "Announcement deleted successfully",
+      200
+    );
+  } catch (error) {
+    return sendError(
+      res,
+      error.message.includes("Invalid") ? error.message : "Server Error",
+      400,
+      error.message
+    );
   }
 };
