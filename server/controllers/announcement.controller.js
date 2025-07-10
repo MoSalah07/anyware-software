@@ -1,18 +1,20 @@
 import Announcement from "../models/announcement.model.js";
 import { validateObjectId } from "../utils/isValidObjectId.js";
 import { sendSuccess, sendError } from "../utils/response.js";
-
 export const getAllAnnouncements = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * limit;
 
-    const announcements = await Announcement.find({}, { __v: 0 })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip)
-      .lean();
+    const [announcements, total] = await Promise.all([
+      Announcement.find({}, { __v: 0 })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(skip)
+        .lean(),
+      Announcement.countDocuments(),
+    ]);
 
     if (!announcements.length) {
       return sendError(res, "Announcements not found", 404);
@@ -20,7 +22,12 @@ export const getAllAnnouncements = async (req, res) => {
 
     return sendSuccess(
       res,
-      { announcements },
+      {
+        announcements,
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      },
       "Announcements fetched successfully",
       200
     );
