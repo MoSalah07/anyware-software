@@ -62,14 +62,13 @@ export const getSingleAnnouncement = async (req, res) => {
 
 export const createAnnouncement = async (req, res) => {
   try {
-    const { title, content, postedby } = req.body;
+    const { content, postedby } = req.body;
 
-    if (!title?.trim() || !content?.trim() || !postedby?.trim()) {
+    if (!content?.trim() || !postedby?.trim()) {
       return sendError(res, "All fields are required", 400);
     }
 
     const newAnnouncement = await Announcement.create({
-      title,
       content,
       postedby,
     });
@@ -89,15 +88,15 @@ export const updateAnnouncement = async (req, res) => {
   try {
     validateObjectId(req.params.id, "Announcement ID");
 
-    const { title, content, postedby } = req.body;
+    const { content, postedby } = req.body;
 
-    if (!title?.trim() || !content?.trim() || !postedby?.trim()) {
+    if (!content?.trim() || !postedby?.trim()) {
       return sendError(res, "All fields are required", 400);
     }
 
     const updated = await Announcement.findByIdAndUpdate(
       req.params.id,
-      { title, content, postedby },
+      { content, postedby },
       { new: true }
     );
 
