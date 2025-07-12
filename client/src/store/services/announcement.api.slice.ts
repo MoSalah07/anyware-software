@@ -19,6 +19,7 @@ export const announcementApiSlice = createApi({
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_SERVER_URL}`,
+    credentials: "include",
   }),
   endpoints: (builder) => ({
     getAnnouncements: builder.query<IProductResponse, { page: number }>({
