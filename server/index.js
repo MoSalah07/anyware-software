@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://anyware-software.vercel.app",
+  process.env.DEV_CLIENT_URL,
+  process.env.PROD_CLIENT_URL,
 ];
 
 app.use(
