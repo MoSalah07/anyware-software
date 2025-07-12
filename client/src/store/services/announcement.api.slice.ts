@@ -41,6 +41,18 @@ export const announcementApiSlice = createApi({
             ]
           : [{ type: "Announcements" as const, id: "LIST" }],
     }),
+    // Create => Method POST
+    createAnnouncement: builder.mutation<
+      IAnnouncement,
+      { content: string; postedby: string }
+    >({
+      query: (body) => ({
+        url: "/api/announcements/create-announcement",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "Announcements", id: "LIST" }],
+    }),
     // Delete => Method Delete
     deleteAnnouncement: builder.mutation<IAnnouncement[], string>({
       query: (id: string) => {
@@ -55,13 +67,12 @@ export const announcementApiSlice = createApi({
     //  Update => Method PUT
     updateAnnouncement: builder.mutation<
       IAnnouncement,
-      { id: string; body: FormData }
+      { id: string; body: { content: string; postedby: string } }
     >({
       query: ({ id, body }) => {
         return {
           url: `/api/announcements/update-announcement/${id}`,
           method: "PUT",
-
           body,
         };
       },
@@ -91,6 +102,7 @@ export const announcementApiSlice = createApi({
 
 export const {
   useGetAnnouncementsQuery,
+  useCreateAnnouncementMutation,
   useDeleteAnnouncementMutation,
   useUpdateAnnouncementMutation,
 } = announcementApiSlice;

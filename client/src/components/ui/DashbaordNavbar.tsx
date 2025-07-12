@@ -1,9 +1,19 @@
-import { AppBar, Box, Toolbar, Typography, styled } from "@mui/material";
+import { useState } from "react";
+import {
+  AppBar,
+  Box,
+  Button,
+  Toolbar,
+  Typography,
+  styled,
+} from "@mui/material";
 import Search from "./Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import EmailIcon from "@mui/icons-material/Email";
 import IconWithBadge from "../shared/IconWithBadge";
 import AccountMenu from "./dashbaord/AccountMenu";
+import MenuIcon from "@mui/icons-material/Menu";
+import DashboardSidebarMob from "./dashbaord/DashboardSidebarMob";
 
 const NavbarContainer = styled(Box)({
   display: "flex",
@@ -19,6 +29,12 @@ const ToolbarSection = styled(Box)({
 });
 
 export default function DashbaordNavbar() {
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
+
   return (
     <AppBar
       position="relative"
@@ -30,9 +46,19 @@ export default function DashbaordNavbar() {
     >
       <Toolbar>
         <NavbarContainer>
-          <Typography variant="h6" sx={{ fontSize: "1rem" }}>
+          <Typography
+            variant="h6"
+            sx={{ fontSize: "1rem", display: { xs: "none", lg: "block" } }}
+          >
             Hello Admin
           </Typography>
+
+          <Button
+            onClick={toggleDrawer(true)}
+            sx={{ display: { xs: "block", lg: "none" } }}
+          >
+            <MenuIcon />
+          </Button>
 
           <ToolbarSection>
             <Search />
@@ -47,6 +73,7 @@ export default function DashbaordNavbar() {
           </ToolbarSection>
         </NavbarContainer>
       </Toolbar>
+      <DashboardSidebarMob open={open} toggleDrawer={toggleDrawer} />
     </AppBar>
   );
 }

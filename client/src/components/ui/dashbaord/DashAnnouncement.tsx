@@ -8,7 +8,7 @@ export default function DashAnnouncement() {
     page: 1,
   });
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <Box

@@ -8,16 +8,16 @@ export default function DashboardLayout() {
     <Box sx={{ height: "100vh" }}>
       <Grid container sx={{ height: "100%" }}>
         <Grid
-          size={{ xs: 0, sm: 0, md: 2, lg: 2, xl: 2 }}
+          size={{ xs: 0, sm: 0, md: 0, lg: 2, xl: 2 }}
           sx={{
             borderRight: "1px solid #ccc",
             height: "100%",
-            display: { xs: "none", md: "block" },
+            display: { xs: "none", lg: "block" },
           }}
         >
           <DashbaordSidebar />
         </Grid>
-        <Grid size={{ xs: 12, sm: 12, md: 10, lg: 10, xl: 10 }}>
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 10, xl: 10 }}>
           <Box component={"section"}>
             <DashbaordNavbar />
             <Container

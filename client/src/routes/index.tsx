@@ -7,14 +7,17 @@ import {
 import Home from "../pages/Home";
 import Dashbaord from "../pages/Dashbaord";
 import Announcement from "../pages/Announcement";
+import Quiz from "../pages/Quiz";
 // Layout
 import RootLayout from "../layouts/RootLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 // ProtectedAuth
 import requireAuth from "../hoc/requireAuth";
-import Quiz from "../pages/Quiz";
+import NotFoundPage from "../pages/NotFound";
 
 const ProtectedDashboard = requireAuth(Dashbaord);
+const ProtectedQuiz = requireAuth(Quiz);
+const ProtectedAnnouncement = requireAuth(Announcement);
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,11 +27,10 @@ export const router = createBrowserRouter(
       </Route>
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<ProtectedDashboard />} />
-        <Route path="quiz" element={<Quiz />} />
-        <Route path="announcement" element={<Announcement />} />
+        <Route path="quiz" element={<ProtectedQuiz />} />
+        <Route path="announcement" element={<ProtectedAnnouncement />} />
       </Route>
-      {/* Not Found */}
-      <Route path="*" element={<h1>Not Found</h1>} />
+      <Route path="*" element={<NotFoundPage />} />
     </>
   )
 );
