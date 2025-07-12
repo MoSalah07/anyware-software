@@ -2,7 +2,9 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
+// Routes
 import announcementsRouter from "./routes/announcement.route.js";
+import quizRouter from "./routes/quiz.route.js";
 
 const PORT = process.env.PORT || 9000;
 const app = express();
@@ -42,6 +44,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/announcements", announcementsRouter);
+app.use("/api/quiz", quizRouter);
 
 app.listen(PORT, () => {
   connectDB();
