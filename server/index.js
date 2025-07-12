@@ -16,10 +16,22 @@ const CLIENT_URL =
 
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        process.env.DEV_CLIENT_URL,
+        process.env.PROD_CLIENT_URL,
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+app.options("*", cors());
 
 app.use("/api/announcements", announcementsRouter);
 
