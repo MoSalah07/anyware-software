@@ -1,8 +1,20 @@
 import { Box, Button, Stack } from "@mui/material";
 import HeadingTitle from "../components/shared/HeadingTitle";
 import TableContent from "../components/shared/TableContent";
+import {
+  useGetAnnouncementsQuery,
+  useDeleteAnnouncementMutation,
+} from "../store/services/announcement.api.slice";
 
 export default function Announcement() {
+  const { data: announcements } = useGetAnnouncementsQuery({
+    page: 1,
+  });
+
+  const [destroyAnnouncement, { isLoading: isDestroyLoading, isSuccess }] =
+    useDeleteAnnouncementMutation();
+  console.log(isDestroyLoading);
+  console.log(isSuccess);
   return (
     <Box component={"section"}>
       <Stack
@@ -15,7 +27,10 @@ export default function Announcement() {
           Create
         </Button>
       </Stack>
-      <TableContent data={[]} />
+      <TableContent
+        data={announcements?.data.announcements || []}
+        onDelete={destroyAnnouncement}
+      />
     </Box>
   );
 }

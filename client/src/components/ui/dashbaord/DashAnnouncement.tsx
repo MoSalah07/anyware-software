@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import AnnouncementCard from "./AnnouncementCard";
 import { useGetAnnouncementsQuery } from "../../../store/services/announcement.api.slice";
 export default function DashAnnouncement() {
-  const { data, isLoading } = useGetAnnouncementsQuery({
+  const { data } = useGetAnnouncementsQuery({
     page: 1,
   });
 
-  // console.log(data);
+  console.log(data);
 
   return (
     <Box

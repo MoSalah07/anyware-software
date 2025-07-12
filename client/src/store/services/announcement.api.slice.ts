@@ -25,7 +25,7 @@ export const announcementApiSlice = createApi({
       query: (arg): { url: string } => {
         const { page } = arg;
         return {
-          url: `/api/announcements/all-announcement?limit=5&page=${page}`,
+          url: `/api/announcements/all-announcement?limit=20&page=${page}`,
         };
       },
       // Mutations in Query
