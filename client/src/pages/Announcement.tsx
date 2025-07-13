@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
-import { Box, Button, Stack } from "@mui/material";
-import HeadingTitle from "../components/shared/HeadingTitle";
+import { Box } from "@mui/material";
 import TableContent from "../components/shared/TableContent";
 import {
   useGetAnnouncementsQuery,
@@ -9,6 +8,7 @@ import {
   useUpdateAnnouncementMutation,
 } from "../store/services/announcement.api.slice";
 import CrudModel from "../components/shared/CrudModel";
+import HeadingTable from "../components/shared/HeadingTable";
 
 export default function Announcement() {
   const [open, setOpen] = useState<boolean>(false);
@@ -46,16 +46,7 @@ export default function Announcement() {
 
   return (
     <Box component={"section"}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <HeadingTitle title="Announcements" />
-        <Button color="secondary" variant="contained" onClick={handleClickOpen}>
-          Create
-        </Button>
-      </Stack>
+      <HeadingTable onclick={handleClickOpen} title={"Announcement"} />
       <CrudModel
         open={open}
         handleClose={handleClose}

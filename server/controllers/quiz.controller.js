@@ -174,3 +174,31 @@ export const deleteQuiz = async (req, res) => {
     );
   }
 };
+
+export const deleteQuestion = async (req, res) => {
+  try {
+    const { quizId, questionId } = req.params;
+
+    validateObjectId(quizId, "Quiz ID");
+    validateObjectId(questionId, "Question ID");
+
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) return sendError(res, "Quiz not found", 404);
+
+    quiz.questions = quiz.questions.filter(
+      (q) => q._id.toString() !== questionId
+    );
+
+    await quiz.save();
+
+    return sendSuccess(res, null, "Question deleted successfully", 200);
+  } catch (error) {
+    return sendError(
+      res,
+      error.message.includes("Invalid") ? error.message : "Server Error",
+      400,
+      error.message
+    );
+  }
+};
