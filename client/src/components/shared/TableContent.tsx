@@ -16,6 +16,7 @@ import SkeletonTable from "./SkeletonTable";
 import CrudModel from "./CrudModel";
 import DeleteModel from "./DeleteModel";
 import ActionButtons from "./ActionButtons";
+import { grey } from "@mui/material/colors";
 
 interface Column {
   id: "avatar" | "postedby" | "content" | "createdAt" | "action";
@@ -134,6 +135,7 @@ export default function TableContent({
                   key={column.id}
                   align={column.align ?? "left"}
                   style={{ minWidth: column.minWidth }}
+                  sx={{ color: grey[600], fontWeight: "bold" }}
                 >
                   {column.label}
                 </TableCell>

@@ -2,6 +2,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import { teal } from "@mui/material/colors";
 import { useTranslation } from "react-i18next";
 import PageHead from "../components/shared/PageHead";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -38,9 +39,12 @@ export default function Home() {
             <Typography variant="body1" gutterBottom>
               anyware-software Challenge
             </Typography>
-            <Button variant="contained" color="info">
-              {t("getStarted")}
-            </Button>
+            <Link to="/dashboard">
+              {" "}
+              <Button variant="contained" color="info">
+                {t("getStarted")}
+              </Button>
+            </Link>
           </Container>
         </Box>
       </Box>

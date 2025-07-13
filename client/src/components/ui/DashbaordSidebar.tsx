@@ -44,27 +44,32 @@ export default function DashbaordSidebar({
       }}
     >
       <Box component={"div"} sx={{ mb: 4 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            my: 2,
-            fontSize: {
-              xs: "1rem",
-              sm: "1.4rem",
-              md: "1.5rem",
-              lg: "1.8rem",
-            },
-            letterSpacing: {
-              xs: "0.5px",
-              sm: "1px",
-              md: "2px",
-            },
-          }}
-          textAlign={"center"}
-          fontWeight={"bold"}
+        <Link
+          to={`/dashboard`}
+          style={{ textDecoration: "none", color: "white" }}
         >
-          Coligo
-        </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              my: 2,
+              fontSize: {
+                xs: "1rem",
+                sm: "1.4rem",
+                md: "1.5rem",
+                lg: "1.8rem",
+              },
+              letterSpacing: {
+                xs: "0.5px",
+                sm: "1px",
+                md: "2px",
+              },
+            }}
+            textAlign={"center"}
+            fontWeight={"bold"}
+          >
+            Coligo
+          </Typography>
+        </Link>
       </Box>
 
       <List>

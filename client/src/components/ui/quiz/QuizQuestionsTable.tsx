@@ -19,6 +19,7 @@ import QuizFormModal from "./QuizFormModal";
 import type { QuizForm } from "./QuizFormModal";
 import SkeletonTable from "../../shared/SkeletonTable";
 import ActionButtons from "../../shared/ActionButtons";
+import { grey } from "@mui/material/colors";
 
 type Quiz = QuizForm & { id: string };
 
@@ -45,18 +46,15 @@ export default function QuizQuestionsTable({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Pagination handlers
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  // Open modal for editing quiz
   const handleEditClick = (quiz: Quiz) => {
     setEditQuiz(quiz);
     setModalOpen(true);
   };
 
-  // Submit handler for modal (edit or add)
   const handleSubmit = (quizForm: QuizForm) => {
     if (editQuiz) {
       onEdit({ ...quizForm, id: editQuiz.id });
@@ -65,7 +63,6 @@ export default function QuizQuestionsTable({
     }
   };
 
-  // Delete confirmation handlers
   const openDeleteConfirm = (id: string) => {
     setDeleteId(id);
     setDeleteConfirmOpen(true);
@@ -91,11 +88,24 @@ export default function QuizQuestionsTable({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Question</TableCell>
-              <TableCell>Correct Answer</TableCell>
-              <TableCell>Options</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell sx={{ color: grey[600], fontWeight: "bold" }}>
+                Title
+              </TableCell>
+              <TableCell sx={{ color: grey[600], fontWeight: "bold" }}>
+                Question
+              </TableCell>
+              <TableCell sx={{ color: grey[600], fontWeight: "bold" }}>
+                Correct Answer
+              </TableCell>
+              <TableCell sx={{ color: grey[600], fontWeight: "bold" }}>
+                Options
+              </TableCell>
+              <TableCell
+                align="right"
+                sx={{ color: grey[600], fontWeight: "bold" }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -144,7 +154,6 @@ export default function QuizQuestionsTable({
         </Table>
       </TableContainer>
 
-      {/* Quiz add/edit modal */}
       <QuizFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -152,7 +161,6 @@ export default function QuizQuestionsTable({
         initialData={editQuiz || undefined}
       />
 
-      {/* Delete confirmation dialog */}
       <Dialog open={deleteConfirmOpen} onClose={closeDeleteConfirm}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>

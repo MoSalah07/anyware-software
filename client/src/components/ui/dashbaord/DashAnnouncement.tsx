@@ -78,7 +78,7 @@ export default function DashAnnouncement() {
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <HeadingTitle title="Quiz" />
+            <HeadingTitle title="Quizzes" />
             <Link to={`/dashboard/quiz`}>
               <Typography
                 variant="body2"
