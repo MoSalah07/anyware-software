@@ -16,7 +16,7 @@ export default function SkeletonTable({
   return (
     <>
       {Array.from({ length: rows }).map((_, rowIndex) => (
-        <TableRow key={rowIndex}>
+        <TableRow key={rowIndex} data-testid="skeleton-row">
           {Array.from({ length: columns }).map((_, colIndex) => (
             <TableCell key={colIndex}>
               <Skeleton

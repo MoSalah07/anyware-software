@@ -12,6 +12,7 @@ import {
   useUpdateQuizMutation,
 } from "../store/services/quiz.api.slice";
 import type { IQuiz } from "../interfaces";
+import PageHead from "../components/shared/PageHead";
 
 type Quiz = QuizForm & { id: string };
 
@@ -76,22 +77,25 @@ export default function Quiz() {
   );
 
   return (
-    <Box component="section" p={2}>
-      <HeadingTable onclick={() => setOpenModal(true)} title="Quiz" />
+    <>
+      <PageHead title="Quiz" description="Quiz" />
+      <Box component="section" p={2}>
+        <HeadingTable onclick={() => setOpenModal(true)} title="Quiz" />
 
-      <QuizFormModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSubmit={handleCreateQuiz}
-      />
+        <QuizFormModal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          onSubmit={handleCreateQuiz}
+        />
 
-      <QuizQuestionsTable
-        data={quizzesArray}
-        isLoading={isLoading}
-        onAdd={(quiz) => console.log("Add question", quiz)}
-        onEdit={handleEditQuiz}
-        onDelete={handleDeleteQuiz}
-      />
-    </Box>
+        <QuizQuestionsTable
+          data={quizzesArray}
+          isLoading={isLoading}
+          onAdd={(quiz) => console.log("Add question", quiz)}
+          onEdit={handleEditQuiz}
+          onDelete={handleDeleteQuiz}
+        />
+      </Box>
+    </>
   );
 }

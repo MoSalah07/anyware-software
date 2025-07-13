@@ -9,6 +9,7 @@ import {
 } from "../store/services/announcement.api.slice";
 import CrudModel from "../components/shared/CrudModel";
 import HeadingTable from "../components/shared/HeadingTable";
+import PageHead from "../components/shared/PageHead";
 
 export default function Announcement() {
   const [open, setOpen] = useState<boolean>(false);
@@ -45,20 +46,23 @@ export default function Announcement() {
   );
 
   return (
-    <Box component={"section"}>
-      <HeadingTable onclick={handleClickOpen} title={"Announcement"} />
-      <CrudModel
-        open={open}
-        handleClose={handleClose}
-        title="Add Announcement"
-        handlingSubmit={handleCreateSubmit}
-      />
-      <TableContent
-        data={announcements?.data.announcements || []}
-        onDelete={destroyAnnouncement}
-        onEdit={updateAnnouncement}
-        isLoading={loadingAnnouncements}
-      />
-    </Box>
+    <>
+      <PageHead title="Announcement" description="Announcement" />
+      <Box component={"section"}>
+        <HeadingTable onclick={handleClickOpen} title={"Announcement"} />
+        <CrudModel
+          open={open}
+          handleClose={handleClose}
+          title="Add Announcement"
+          handlingSubmit={handleCreateSubmit}
+        />
+        <TableContent
+          data={announcements?.data.announcements || []}
+          onDelete={destroyAnnouncement}
+          onEdit={updateAnnouncement}
+          isLoading={loadingAnnouncements}
+        />
+      </Box>
+    </>
   );
 }
