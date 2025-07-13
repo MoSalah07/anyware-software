@@ -33,6 +33,8 @@ const formSchema = z.object({
 
 export type QuizForm = z.infer<typeof formSchema>;
 
+export type QuizFormWithId = QuizForm & { _id: string };
+
 type Props = {
   open: boolean;
   onClose: () => void;

@@ -55,12 +55,18 @@ function QuizQuestionsTable({ questions, onEdit, onDelete }: Props) {
               <TableCell align="center">
                 <Stack direction="row" spacing={1} justifyContent="center">
                   <Tooltip title="Edit">
-                    <IconButton color="primary" onClick={() => onEdit?.(q._id)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => onEdit?.(q?._id as string)}
+                    >
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete">
-                    <IconButton color="error" onClick={() => onDelete?.(q._id)}>
+                    <IconButton
+                      color="error"
+                      onClick={() => onDelete?.(q?._id as string)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>

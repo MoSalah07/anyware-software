@@ -22,7 +22,7 @@ export interface Quiz {
 }
 
 export interface IQuestion {
-  _id: string;
+  _id?: string;
   question: string;
   options: string[];
   correctAnswer: string;

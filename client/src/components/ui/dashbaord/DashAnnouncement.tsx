@@ -3,10 +3,14 @@ import HeadingTitle from "../../shared/HeadingTitle";
 import { Link } from "react-router-dom";
 import AnnouncementCard from "./AnnouncementCard";
 import { useGetAnnouncementsQuery } from "../../../store/services/announcement.api.slice";
+import type { IAnnouncement } from "../../../interfaces";
+import AnnouncementSkeletonCard from "../../shared/AnnouncementSkeletonCard";
 export default function DashAnnouncement() {
-  useGetAnnouncementsQuery({
-    page: 1,
-  });
+  const { data: announcements, isLoading: loadingAnnouncements } =
+    useGetAnnouncementsQuery({
+      page: 1,
+      limit: 5,
+    });
 
   return (
     <Box
@@ -40,9 +44,13 @@ export default function DashAnnouncement() {
       </Stack>
 
       <Box sx={{ pt: 2, borderTop: "1px solid #ccc" }}>
-        <AnnouncementCard />
-        <AnnouncementCard />
-        <AnnouncementCard />
+        {loadingAnnouncements
+          ? Array.from({ length: 5 }).map((_, i) => (
+              <AnnouncementSkeletonCard key={i} />
+            ))
+          : announcements?.data.announcements.map((item: IAnnouncement) => (
+              <AnnouncementCard key={item._id} announcement={item} />
+            ))}
       </Box>
     </Box>
   );

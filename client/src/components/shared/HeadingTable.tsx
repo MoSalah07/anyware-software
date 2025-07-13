@@ -16,7 +16,7 @@ export default function HeadingTable({
     >
       <HeadingTitle title={title} />
       <Button color="secondary" variant="contained" onClick={onclick}>
-        Create {title}
+        Create
       </Button>
     </Stack>
   );

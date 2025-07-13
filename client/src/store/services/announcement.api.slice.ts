@@ -22,11 +22,15 @@ export const announcementApiSlice = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getAnnouncements: builder.query<IProductResponse, { page: number }>({
+    getAnnouncements: builder.query<
+      IProductResponse,
+      { page: number; limit?: number }
+    >({
       query: (arg): { url: string } => {
         const { page } = arg;
+        const limit = arg.limit || 20;
         return {
-          url: `/api/announcements/all-announcement?limit=20&page=${page}`,
+          url: `/api/announcements/all-announcement?limit=${limit}&page=${page}`,
         };
       },
       // Mutations in Query

@@ -4,8 +4,7 @@ import {
   createQuiz,
   getSingleQuiz,
   deleteQuiz,
-  updateQuiz,
-  deleteQuestion,
+  updateQuizو,
 } from "../controllers/quiz.controller.js";
 
 const router = express.Router();
@@ -15,9 +14,5 @@ router.get("/single-quiz/:id", getSingleQuiz);
 router.post("/create-quiz", createQuiz);
 router.delete("/delete-quiz/:id", deleteQuiz);
 router.put("/update-quiz/:id", updateQuiz);
-router.delete(
-  "/delete-quiz/:quizId/delete-questions/:questionId",
-  deleteQuestion
-);
 
 export default router;
