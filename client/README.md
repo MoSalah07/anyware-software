@@ -1,69 +1,106 @@
-# React + TypeScript + Vite
+# 🎓 Anyware Software – Full Stack Challenge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application to manage and display **quizzes** and **announcements** for students in the current semester.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+### 🔷 Frontend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React + Redux Toolkit
+- TypeScript
+- Material UI (MUI)
+- React Router
+- i18n-ready (Internationalization)
+- React Testing Library (Unit + Integration tests)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📸 Demo
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+🌍 [Live Demo](https://anyware-software.vercel.app)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📱 Responsive Design
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The UI is responsive and adapts to all screen sizes:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- 💻 Desktop
+- 📱 Mobile
+- 📟 Tablet
+
+---
+
+## ✨ Main Features
+
+- 🧑‍🏫 Protected Dashboard
+- 📰 CRUD for Announcements
+- 🧪 CRUD for Quizzes
+- 🧩 Reusable UI Components
+- 🖱️ Sidebar hover turns background/text white
+- 🌍 i18n support for future translations
+- 🧪 Unit & Integration Tests using React Testing Library
+
+---
+
+## ⏱️ Development Time
+
+This project was completed in **23 hours**:
+
+### ✅ Backend – 5 hours
+
+- Setup Express.js project structure
+- Mongoose schema modeling (Quiz & Announcement)
+- REST API implementation (CRUD)
+- Input validation using `express-validator`
+- Environment config & error handling
+
+### ✅ Frontend – 18 hours
+
+- UI layout & responsive design using MUI
+- Dashboard structure and sidebar design
+- Login/Logout system with `requireAuth` HOC
+- CRUD implementation using RTK Query
+- Dialogs & Forms using MUI + React Hook Form + Zod
+- Internationalization-ready structure (`i18n`)
+- Reusable components: Tables, Modals, Buttons
+- Testing: React Testing Library (unit & integration)
+
+---
+
+## 🧪 Testing
+
+- Comprehensive unit and integration testing using **Vitest**
+- Testing covers:
+  - ✅ UI rendering and user interactions
+  - ✅ API mutation and response handling
+  - ✅ Authentication logic and protected route redirection
+- Test Utilities:
+  - `@testing-library/react`
+  - `@testing-library/user-event`
+  - `vitest` for running and organizing test suites
+
+---
+
+## 📦 Installation & Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/MoSalah07/anyware-software.git
+cd anyware-software
+
+# Install frontend dependencies
+cd frontend
+npm install
+
+# Install backend dependencies
+cd ../backend
+npm install
+
+# Run the backend
+npm run dev
+
+# Run the frontend (in another terminal)
+cd ../frontend
+npm run dev
 ```
