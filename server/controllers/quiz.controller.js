@@ -2,7 +2,6 @@ import Quiz from "../models/quiz.model.js";
 import { validateObjectId } from "../utils/isValidObjectId.js";
 import { sendSuccess, sendError } from "../utils/response.js";
 
-// ✅ Get all quizzes
 export const getAllQuizes = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
@@ -38,7 +37,6 @@ export const getAllQuizes = async (req, res) => {
   }
 };
 
-// ✅ Get single quiz
 export const getSingleQuiz = async (req, res) => {
   try {
     validateObjectId(req.params.id, "Quiz ID");
@@ -58,7 +56,6 @@ export const getSingleQuiz = async (req, res) => {
   }
 };
 
-// ✅ Create quiz (single question)
 export const createQuiz = async (req, res) => {
   try {
     const { title, question } = req.body;
@@ -73,11 +70,12 @@ export const createQuiz = async (req, res) => {
       !text?.trim() ||
       !Array.isArray(options) ||
       options.length < 3 ||
+      options.length > 4 ||
       !correctAnswer?.trim()
     ) {
       return sendError(
         res,
-        "Question must have text, at least 3 options, and correctAnswer",
+        "Question must have text, 3 to 4 options, and a correct answer",
         400
       );
     }
@@ -106,7 +104,6 @@ export const createQuiz = async (req, res) => {
   }
 };
 
-// ✅ Update quiz
 export const updateQuiz = async (req, res) => {
   try {
     validateObjectId(req.params.id, "Quiz ID");
@@ -164,7 +161,6 @@ export const updateQuiz = async (req, res) => {
   }
 };
 
-// ✅ Delete quiz
 export const deleteQuiz = async (req, res) => {
   try {
     validateObjectId(req.params.id, "Quiz ID");
