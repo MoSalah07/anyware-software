@@ -7,33 +7,26 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const questionSchema = z.object({
-  question: z.string().min(3, "Question is required"),
-  correctAnswer: z.string().min(1, "Correct answer is required"),
-  options: z
-    .array(z.string().min(1, "Option cannot be empty"))
-    .min(3, "At least 3 options are required"),
-});
-
-const formSchema = z.object({
+const quizSchema = z.object({
   title: z.string().min(3, "Title is required"),
-  description: z.string().min(3, "Description is required"),
-  questions: z
-    .array(questionSchema)
-    .min(1, "At least one question is required"),
+  question: z.object({
+    question: z.string().min(3, "Question text is required"),
+    correctAnswer: z.string().min(1, "Correct answer is required"),
+    options: z
+      .array(z.string().min(1, "Option cannot be empty"))
+      .min(3, "At least 3 options are required")
+      .max(4, "No more than 4 options allowed"),
+  }),
 });
 
-export type QuizForm = z.infer<typeof formSchema>;
-
-export type QuizFormWithId = QuizForm & { _id: string };
+export type QuizForm = z.infer<typeof quizSchema>;
 
 type Props = {
   open: boolean;
@@ -42,10 +35,13 @@ type Props = {
   initialData?: QuizForm;
 };
 
-const defaultQuestion = {
-  question: "",
-  correctAnswer: "",
-  options: ["", "", ""],
+const defaultValues: QuizForm = {
+  title: "",
+  question: {
+    question: "",
+    correctAnswer: "",
+    options: ["", "", ""],
+  },
 };
 
 export default function QuizFormModal({
@@ -61,33 +57,12 @@ export default function QuizFormModal({
     register,
     formState: { errors },
   } = useForm<QuizForm>({
-    resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      title: "",
-      description: "",
-      questions: [defaultQuestion],
-    },
-  });
-
-  const {
-    fields: questionFields,
-    append: appendQuestion,
-    remove: removeQuestion,
-  } = useFieldArray({
-    control,
-    name: "questions",
+    resolver: zodResolver(quizSchema),
+    defaultValues: initialData || defaultValues,
   });
 
   useEffect(() => {
-    if (initialData) {
-      reset(initialData);
-    } else {
-      reset({
-        title: "",
-        description: "",
-        questions: [defaultQuestion],
-      });
-    }
+    reset(initialData || defaultValues);
   }, [initialData, open, reset]);
 
   const onFormSubmit = (data: QuizForm) => {
@@ -97,7 +72,7 @@ export default function QuizFormModal({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{initialData ? "Edit Quiz" : "Create New Quiz"}</DialogTitle>
+      <DialogTitle>{initialData ? "Edit Quiz" : "Create Quiz"}</DialogTitle>
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent dividers>
           <TextField
@@ -108,119 +83,71 @@ export default function QuizFormModal({
             error={!!errors.title}
             helperText={errors.title?.message}
           />
+
           <TextField
-            label="Description"
+            label="Question Text"
             fullWidth
             margin="dense"
-            {...register("description")}
-            error={!!errors.description}
-            helperText={errors.description?.message}
+            {...register("question.question")}
+            error={!!errors.question?.question}
+            helperText={errors.question?.question?.message}
           />
 
-          {questionFields.map((question, qIndex) => (
-            <Box
-              key={question.id}
-              mt={3}
-              p={2}
-              border="1px solid #ccc"
-              borderRadius={2}
-              position="relative"
-            >
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="subtitle1">
-                  Question {qIndex + 1}
-                </Typography>
-                {questionFields.length > 1 && (
-                  <Button
-                    color="error"
-                    size="small"
-                    onClick={() => removeQuestion(qIndex)}
-                  >
-                    Delete Question
-                  </Button>
-                )}
-              </Box>
+          <TextField
+            label="Correct Answer"
+            fullWidth
+            margin="dense"
+            {...register("question.correctAnswer")}
+            error={!!errors.question?.correctAnswer}
+            helperText={errors.question?.correctAnswer?.message}
+          />
 
-              <TextField
-                label="Question Text"
-                fullWidth
-                margin="dense"
-                {...register(`questions.${qIndex}.question` as const)}
-                error={!!errors.questions?.[qIndex]?.question}
-                helperText={errors.questions?.[qIndex]?.question?.message}
-              />
-
-              <TextField
-                label="Correct Answer"
-                fullWidth
-                margin="dense"
-                {...register(`questions.${qIndex}.correctAnswer` as const)}
-                error={!!errors.questions?.[qIndex]?.correctAnswer}
-                helperText={errors.questions?.[qIndex]?.correctAnswer?.message}
-              />
-
-              <Controller
-                control={control}
-                name={`questions.${qIndex}.options`}
-                render={({ field }) => (
-                  <>
-                    {field.value.map((opt, optIndex) => (
-                      <Box
-                        key={optIndex}
-                        display="flex"
-                        alignItems="center"
-                        gap={1}
+          <Controller
+            control={control}
+            name="question.options"
+            render={({ field }) => (
+              <>
+                {field.value.map((opt, index) => (
+                  <Box key={index} display="flex" alignItems="center" gap={1}>
+                    <TextField
+                      fullWidth
+                      label={`Option ${index + 1}`}
+                      value={opt}
+                      onChange={(e) => {
+                        const updated = [...field.value];
+                        updated[index] = e.target.value;
+                        field.onChange(updated);
+                      }}
+                      margin="dense"
+                      error={!!errors.question?.options?.[index]}
+                      helperText={errors.question?.options?.[index]?.message}
+                    />
+                    {field.value.length > 3 && (
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          const updated = [...field.value];
+                          updated.splice(index, 1);
+                          field.onChange(updated);
+                        }}
                       >
-                        <TextField
-                          fullWidth
-                          label={`Option ${optIndex + 1}`}
-                          value={opt}
-                          onChange={(e) => {
-                            const updated = [...field.value];
-                            updated[optIndex] = e.target.value;
-                            field.onChange(updated);
-                          }}
-                          margin="dense"
-                          error={
-                            !!errors.questions?.[qIndex]?.options?.[optIndex]
-                          }
-                          helperText={
-                            errors.questions?.[qIndex]?.options?.[optIndex]
-                              ?.message
-                          }
-                        />
-                        {field.value.length > 3 && (
-                          <IconButton
-                            color="error"
-                            onClick={() => {
-                              const updated = [...field.value];
-                              updated.splice(optIndex, 1);
-                              field.onChange(updated);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        )}
-                      </Box>
-                    ))}
-                    <Box textAlign="right" mt={1}>
-                      <Button
-                        onClick={() => field.onChange([...field.value, ""])}
-                      >
-                        ➕ Add Option
-                      </Button>
-                    </Box>
-                  </>
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                ))}
+                {field.value.length < 4 && (
+                  <Box textAlign="right" mt={1}>
+                    <Button
+                      onClick={() => field.onChange([...field.value, ""])}
+                    >
+                      ➕ Add Option
+                    </Button>
+                  </Box>
                 )}
-              />
-            </Box>
-          ))}
-
-          <Box textAlign="left" mt={2}>
-            <Button onClick={() => appendQuestion(defaultQuestion)}>
-              ➕ Add New Question
-            </Button>
-          </Box>
+              </>
+            )}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>

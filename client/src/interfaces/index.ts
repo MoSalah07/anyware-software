@@ -7,20 +7,6 @@ export interface IAnnouncement {
   updatedAt: Date;
 }
 
-// Quiz
-export interface Question {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-export interface Quiz {
-  _id?: string;
-  title: string;
-  description?: string;
-  questions: Question[];
-}
-
 export interface IQuestion {
   _id?: string;
   question: string;
@@ -30,12 +16,12 @@ export interface IQuestion {
 }
 
 export interface IQuiz {
-  _id: string;
+  _id?: string;
   title: string;
-  description?: string;
-  questions: IQuestion[];
-  createdAt: string;
-  updatedAt: string;
+  semester: string;
+  question: IQuestion;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IQuizResponse {

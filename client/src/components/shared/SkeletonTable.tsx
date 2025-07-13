@@ -1,39 +1,52 @@
-import React from "react";
-import { TableRow, TableCell, Skeleton } from "@mui/material";
-import type { TableCellProps } from "@mui/material";
-
-interface Column {
-  id: string;
-  label: string;
-  align?: TableCellProps["align"];
-}
-
-const columns: Column[] = [
-  { id: "avatar", label: "Avatar", align: "center" },
-  { id: "postedby", label: "Posted By", align: "left" },
-  { id: "content", label: "Content", align: "left" },
-  { id: "createdAt", label: "Created At", align: "right" },
-  { id: "action", label: "Action", align: "right" },
-];
+import { Skeleton, TableRow, TableCell } from "@mui/material";
 
 interface SkeletonTableProps {
   rows?: number;
+  columns?: number;
+  withActions?: boolean;
+  cellHeight?: number;
 }
 
-const SkeletonTable: React.FC<SkeletonTableProps> = ({ rows = 5 }) => {
+export default function SkeletonTable({
+  rows = 5,
+  columns = 5,
+  withActions = false,
+  cellHeight = 40,
+}: SkeletonTableProps) {
   return (
     <>
-      {Array.from({ length: rows }).map((_, index) => (
-        <TableRow data-testid="skeleton-row" key={index}>
-          {columns.map((column) => (
-            <TableCell key={column.id} align={column.align ?? "left"}>
-              <Skeleton variant="rectangular" height={20} />
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <TableRow key={rowIndex}>
+          {Array.from({ length: columns }).map((_, colIndex) => (
+            <TableCell key={colIndex}>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height={cellHeight}
+              />
             </TableCell>
           ))}
+          {withActions && (
+            <TableCell
+              align="center"
+              sx={{ display: "flex", justifyContent: "center", gap: 1 }}
+            >
+              <Skeleton
+                variant="circular"
+                width={32}
+                height={32}
+                sx={{ mx: 0.5 }}
+              />
+              <Skeleton
+                variant="circular"
+                width={32}
+                height={32}
+                sx={{ mx: 0.5 }}
+              />
+            </TableCell>
+          )}
         </TableRow>
       ))}
     </>
   );
-};
-
-export default SkeletonTable;
+}

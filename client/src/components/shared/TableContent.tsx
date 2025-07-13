@@ -9,15 +9,13 @@ import {
   TablePagination,
   TableRow,
   Avatar,
-  IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
 import type { IAnnouncement } from "../../interfaces";
 import SkeletonTable from "./SkeletonTable";
 import CrudModel from "./CrudModel";
 import DeleteModel from "./DeleteModel";
+import ActionButtons from "./ActionButtons";
 
 interface Column {
   id: "avatar" | "postedby" | "content" | "createdAt" | "action";
@@ -44,6 +42,8 @@ interface IProps {
   isLoading: boolean;
 }
 
+type ModalType = "edit" | "delete" | null;
+
 export default function TableContent({
   data,
   onDelete,
@@ -52,11 +52,11 @@ export default function TableContent({
 }: IProps) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openEditModel, setOpenEditModel] = useState(false);
-  const [openDeleteModel, setOpenDeleteModel] = useState(false);
-  const [defaultVal, setDefaultVal] = useState<IAnnouncement>(
-    {} as IAnnouncement
-  );
+
+  const [modalState, setModalState] = useState<{
+    type: ModalType;
+    data: IAnnouncement | null;
+  }>({ type: null, data: null });
 
   const visibleRows = useMemo(() => {
     return data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -77,55 +77,54 @@ export default function TableContent({
     []
   );
 
-  const handleEditOpen = useCallback((row: IAnnouncement) => {
-    setDefaultVal(row);
-    setOpenEditModel(true);
+  const openModal = useCallback((type: ModalType, row: IAnnouncement) => {
+    setModalState({ type, data: row });
   }, []);
 
-  const handleEditClose = useCallback(() => {
-    setOpenEditModel(false);
-  }, []);
-
-  const handleDeleteOpen = useCallback((row: IAnnouncement) => {
-    setDefaultVal(row);
-    setOpenDeleteModel(true);
-  }, []);
-
-  const handleDeleteClose = useCallback(() => {
-    setOpenDeleteModel(false);
+  const closeModal = useCallback(() => {
+    setModalState({ type: null, data: null });
   }, []);
 
   const handleSubmit = useCallback(
-    async (data: { content: string; postedby: string }) => {
+    async (formData: { content: string; postedby: string }) => {
+      if (!modalState.data) return;
       try {
-        onEdit({ id: defaultVal._id, body: data });
+        onEdit({ id: modalState.data._id, body: formData });
+        closeModal();
       } catch (err) {
         console.error(err);
       }
     },
-    [defaultVal, onEdit]
+    [modalState, onEdit, closeModal]
   );
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <CrudModel
-          handleClose={handleEditClose}
-          open={openEditModel}
-          handlingSubmit={handleSubmit}
-          title="Edit Announcement"
-          defaultValues={{
-            content: defaultVal.content,
-            postedby: defaultVal.postedby,
-          }}
-        />
+        {modalState.type === "edit" && modalState.data && (
+          <CrudModel
+            handleClose={closeModal}
+            open={true}
+            handlingSubmit={handleSubmit}
+            title="Edit Announcement"
+            defaultValues={{
+              content: modalState.data.content,
+              postedby: modalState.data.postedby,
+            }}
+          />
+        )}
 
-        <DeleteModel
-          handleClose={handleDeleteClose}
-          open={openDeleteModel}
-          onDelete={onDelete}
-          defaultValue={defaultVal}
-        />
+        {modalState.type === "delete" && modalState.data && (
+          <DeleteModel
+            handleClose={closeModal}
+            open={true}
+            onDelete={() => {
+              onDelete(modalState.data!._id);
+              closeModal();
+            }}
+            defaultValue={modalState.data}
+          />
+        )}
 
         <Table stickyHeader aria-label="announcement table">
           <TableHead>
@@ -141,9 +140,14 @@ export default function TableContent({
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {isLoading ? (
-              <SkeletonTable rows={5} />
+              <SkeletonTable
+                rows={5}
+                columns={columns.length - 1}
+                withActions
+              />
             ) : (
               visibleRows.map((row) => (
                 <TableRow hover tabIndex={-1} key={row._id}>
@@ -172,22 +176,10 @@ export default function TableContent({
                         break;
                       case "action":
                         value = (
-                          <>
-                            <IconButton
-                              aria-label="edit announcement"
-                              onClick={() => handleEditOpen(row)}
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete announcement"
-                              onClick={() => handleDeleteOpen(row)}
-                              color="error"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </>
+                          <ActionButtons
+                            onEditClick={() => openModal("edit", row)}
+                            onDeleteClick={() => openModal("delete", row)}
+                          />
                         );
                         break;
                     }

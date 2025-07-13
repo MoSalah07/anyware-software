@@ -61,20 +61,6 @@ export const quizApiSlice = createApi({
         { type: "Quizzes", id: "LIST" },
       ],
     }),
-
-    deleteQuestion: builder.mutation<
-      { message: string },
-      { quizId: string; questionId: string }
-    >({
-      query: ({ quizId, questionId }) => ({
-        url: `/api/quiz/delete-quiz/${quizId}/delete-questions/${questionId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: (_result, _error, { quizId }) => [
-        { type: "Quizzes", id: quizId },
-        { type: "Quizzes", id: "LIST" },
-      ],
-    }),
   }),
 });
 
@@ -84,5 +70,4 @@ export const {
   useCreateQuizMutation,
   useUpdateQuizMutation,
   useDeleteQuizMutation,
-  useDeleteQuestionMutation,
 } = quizApiSlice;

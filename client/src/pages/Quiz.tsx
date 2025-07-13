@@ -1,73 +1,96 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import QuizFormModal, {
   type QuizForm,
 } from "../components/ui/quiz/QuizFormModal";
 import HeadingTable from "../components/shared/HeadingTable";
-import QuizTable from "../components/ui/quiz/QuizTable";
+import QuizQuestionsTable from "../components/ui/quiz/QuizQuestionsTable";
 import {
   useGetQuizzesQuery,
-  useDeleteQuestionMutation,
+  useDeleteQuizMutation,
   useCreateQuizMutation,
-  // useUpdateQuizMutation,
+  useUpdateQuizMutation,
 } from "../store/services/quiz.api.slice";
-import type { IQuestion } from "../interfaces";
+import type { IQuiz } from "../interfaces";
+
+type Quiz = QuizForm & { id: string };
 
 export default function Quiz() {
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const { data: quizzes } = useGetQuizzesQuery({ page: 1 });
-  const [deleteQuestion] = useDeleteQuestionMutation();
+  const { data, isLoading } = useGetQuizzesQuery({ page: 1 });
+
   const [createQuiz] = useCreateQuizMutation();
-  // const [updateQuiz, { isLoading: isUpdating }] = useUpdateQuizMutation();
+  const [updateQuiz] = useUpdateQuizMutation();
+  const [deleteQuiz] = useDeleteQuizMutation();
 
-  const allQuestions: IQuestion[] =
-    quizzes?.data?.quizzes.flatMap((quiz) =>
-      quiz.questions.map((q) => ({
-        ...q,
-        quizId: quiz._id,
-      }))
-    ) || [];
+  const quizzesArray: Quiz[] =
+    data?.data?.quizzes
+      ?.filter((quiz: IQuiz) => !!quiz._id)
+      .map((quiz: IQuiz) => ({
+        id: quiz._id!,
+        title: quiz.title,
+        question: {
+          question: quiz.question.question,
+          options: quiz.question.options,
+          correctAnswer: quiz.question.correctAnswer,
+        },
+      })) ?? [];
 
-  const handleSubmitQuiz = async (quizData: QuizForm) => {
-    try {
-      await createQuiz(quizData).unwrap();
-      console.log("✅ Quiz Created Successfully");
-      setOpenModal(false);
-    } catch (error) {
-      console.error("❌ Failed to create quiz", error);
-    }
-  };
+  const handleCreateQuiz = useCallback(
+    async (quizData: QuizForm) => {
+      try {
+        await createQuiz(quizData).unwrap();
+        setOpenModal(false);
+        console.log(" Quiz Created Successfully");
+      } catch (error) {
+        console.error(" Failed to create quiz", error);
+      }
+    },
+    [createQuiz]
+  );
 
-  const handleDeleteQuestion = async (questionId: string) => {
-    const question = allQuestions.find((q) => q._id === questionId);
-    if (!question || !question.quizId) return;
+  const handleEditQuiz = useCallback(
+    async (quizData: Quiz) => {
+      try {
+        const { id, ...body } = quizData;
+        await updateQuiz({ id, body }).unwrap();
+        console.log("Quiz Updated Successfully");
+      } catch (error) {
+        console.error(" Failed to update quiz", error);
+      }
+    },
+    [updateQuiz]
+  );
 
-    const confirmed = window.confirm("هل أنت متأكد أنك تريد حذف هذا السؤال؟");
-    if (!confirmed) return;
-
-    try {
-      await deleteQuestion({ quizId: question.quizId, questionId }).unwrap();
-      console.log("✅ تم حذف السؤال بنجاح");
-    } catch (err) {
-      console.error("❌ فشل في حذف السؤال", err);
-    }
-  };
+  const handleDeleteQuiz = useCallback(
+    async (id: string) => {
+      try {
+        await deleteQuiz(id).unwrap();
+        console.log(" Quiz Deleted Successfully");
+      } catch (error) {
+        console.error(" Failed to delete quiz", error);
+      }
+    },
+    [deleteQuiz]
+  );
 
   return (
     <Box component="section" p={2}>
-      <HeadingTable onclick={() => setOpenModal(true)} title={"Quiz"} />
+      <HeadingTable onclick={() => setOpenModal(true)} title="Quiz" />
 
       <QuizFormModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        onSubmit={handleSubmitQuiz}
+        onSubmit={handleCreateQuiz}
       />
 
-      <QuizTable
-        questions={allQuestions}
-        onEdit={(id) => console.log("Edit question", id)}
-        onDelete={handleDeleteQuestion}
+      <QuizQuestionsTable
+        data={quizzesArray}
+        isLoading={isLoading}
+        onAdd={(quiz) => console.log("Add question", quiz)}
+        onEdit={handleEditQuiz}
+        onDelete={handleDeleteQuiz}
       />
     </Box>
   );
