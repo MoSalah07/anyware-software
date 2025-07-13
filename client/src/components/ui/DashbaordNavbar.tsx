@@ -64,10 +64,23 @@ export default function DashbaordNavbar() {
             <Search />
             <ToolbarSection>
               <IconWithBadge
-                icon={<NotificationsIcon color="secondary" />}
+                icon={
+                  <NotificationsIcon
+                    color="secondary"
+                    sx={{ fontSize: { xs: "1.2rem", sm: "1.5rem" } }}
+                  />
+                }
                 count={4}
               />
-              <IconWithBadge icon={<EmailIcon color="secondary" />} count={3} />
+              <IconWithBadge
+                icon={
+                  <EmailIcon
+                    color="secondary"
+                    sx={{ fontSize: { xs: "1.2rem", sm: "1.5rem" } }}
+                  />
+                }
+                count={3}
+              />
               <AccountMenu />
             </ToolbarSection>
           </ToolbarSection>

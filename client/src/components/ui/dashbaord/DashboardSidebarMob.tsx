@@ -8,7 +8,7 @@ interface IProps {
 }
 
 export default function DashboardSidebarMob({ open, toggleDrawer }: IProps) {
-  const DrawerList = <DashbaordSidebar />;
+  const DrawerList = <DashbaordSidebar isMobile toggleDrawer={toggleDrawer} />;
 
   return (
     <div>

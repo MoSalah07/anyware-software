@@ -1,4 +1,3 @@
-// components/ui/Sidebar.tsx
 import {
   Box,
   List,
@@ -23,14 +22,20 @@ const navItems = [
   },
 ];
 
-export default function DashbaordSidebar() {
+export default function DashbaordSidebar({
+  isMobile,
+  toggleDrawer,
+}: {
+  isMobile?: boolean;
+  toggleDrawer?: (newOpen: boolean) => () => void;
+}) {
   const location = useLocation();
 
   return (
     <Box
       component="aside"
       sx={{
-        width: "100%",
+        width: isMobile ? { xs: "200px", sm: "280px" } : "100%",
         height: "100vh",
         borderRight: "1px solid #ddd",
         background: "linear-gradient(to bottom, #13577C 0%, #357C92 100%)",
@@ -68,6 +73,9 @@ export default function DashbaordSidebar() {
             key={item.to}
             component={Link}
             to={item.to}
+            onClick={
+              isMobile && toggleDrawer ? () => toggleDrawer(false)() : undefined
+            }
             selected={location.pathname === item.to}
             sx={{
               borderRadius: 2,

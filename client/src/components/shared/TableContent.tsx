@@ -174,12 +174,14 @@ export default function TableContent({
                         value = (
                           <>
                             <IconButton
+                              aria-label="edit announcement"
                               onClick={() => handleEditOpen(row)}
                               color="primary"
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
+                              aria-label="delete announcement"
                               onClick={() => handleDeleteOpen(row)}
                               color="error"
                             >

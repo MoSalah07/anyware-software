@@ -24,7 +24,7 @@ const SkeletonTable: React.FC<SkeletonTableProps> = ({ rows = 5 }) => {
   return (
     <>
       {Array.from({ length: rows }).map((_, index) => (
-        <TableRow key={index}>
+        <TableRow data-testid="skeleton-row" key={index}>
           {columns.map((column) => (
             <TableCell key={column.id} align={column.align ?? "left"}>
               <Skeleton variant="rectangular" height={20} />

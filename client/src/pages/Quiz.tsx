@@ -6,6 +6,7 @@ import QuizTable from "../components/ui/quiz/QuizTable";
 import {
   useGetQuizzesQuery,
   useDeleteQuestionMutation,
+  // useUpdateQuizMutation,
 } from "../store/services/quiz.api.slice";
 import type { IQuestion } from "../interfaces";
 
@@ -13,6 +14,7 @@ export default function Quiz() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { data: quizzes } = useGetQuizzesQuery({ page: 1 });
   const [deleteQuestion] = useDeleteQuestionMutation();
+  // const [updateQuiz, { isLoading: isUpdating }] = useUpdateQuizMutation();
 
   const allQuestions: IQuestion[] =
     quizzes?.data?.quizzes.flatMap((quiz) =>
