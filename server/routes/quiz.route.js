@@ -4,7 +4,7 @@ import {
   createQuiz,
   getSingleQuiz,
   deleteQuiz,
-  updateQuizو,
+  updateQuiz,
 } from "../controllers/quiz.controller.js";
 
 const router = express.Router();
